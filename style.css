@@ -46,6 +46,8 @@ body{
     margin: 100px auto 0;
     height: 300px; 
     width: 300px;
+    border: 3px solid #e66b4e;
+    border-radius: 10px;
 }
 
 #projetos1{
