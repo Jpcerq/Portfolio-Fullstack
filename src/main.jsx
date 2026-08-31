@@ -27,10 +27,15 @@ const projetos = [
 ];
 
 const competencias = [
-  { titulo: 'Dados', texto: 'Python, Pandas e SQL para transformar dados brutos em informação útil.', icone: 'fa-solid fa-database' },
-  { titulo: 'Desenvolvimento', texto: 'Interfaces web, integrações e soluções construídas com foco no uso real.', icone: 'fa-solid fa-code' },
-  { titulo: 'Cloud & Entrega', texto: 'Git, implantação em nuvem e organização do fluxo até a produção.', icone: 'fa-solid fa-cloud-arrow-up' },
+  { titulo: 'Dados', texto: 'Python, Pandas e SQL para tratar, organizar e analisar dados.', icone: 'fa-solid fa-database' },
+  { titulo: 'APIs REST', texto: 'Consumo e integração de APIs REST em fluxos e aplicações.', icone: 'fa-solid fa-plug' },
+  { titulo: 'Business Intelligence', texto: 'Looker Studio e Power BI para dashboards e visualização de indicadores.', icone: 'fa-solid fa-chart-column' },
+  { titulo: 'Git & GitHub', texto: 'Versionamento, colaboração e organização do desenvolvimento.', icone: 'fa-brands fa-github' },
+  { titulo: 'Desenvolvimento Web', texto: 'HTML, CSS, JavaScript e React para construir interfaces responsivas.', icone: 'fa-solid fa-code' },
+  { titulo: 'Cloud & Entrega', texto: 'Implantação em nuvem e acompanhamento do fluxo até a produção.', icone: 'fa-solid fa-cloud-arrow-up' },
 ];
+
+const interesses = ['Tecnologia', 'Jogos', 'Modelagem 3D', 'Panificação'];
 
 function classificarImc(imc) {
   if (imc < 18.5) return 'Abaixo do peso';
@@ -139,7 +144,6 @@ function Portfolio() {
               <img src="/eu.png" alt="João Pedro Cerqueira Guimarães" />
               <span className="retrato-numero">01</span>
             </div>
-            <div className="disponibilidade"><span /> Disponível para novas conexões</div>
           </div>
 
           <a className="hero-scroll" href="#sobre" aria-label="Rolar para a seção sobre mim">
@@ -156,7 +160,6 @@ function Portfolio() {
             <div className="sobre-texto">
               <p className="texto-destaque">Sou estudante de Engenharia da Computação no SENAI CIMATEC e atuo com dados na Ideia 3.</p>
               <p>No dia a dia, trabalho principalmente com tratamento e conexões de dados de publicidade do Grupo Boticário. É nesse encontro entre análise e construção que encontrei meu caminho profissional.</p>
-              <p>Gosto de entender problemas por inteiro, organizar o que parece complexo e entregar soluções simples de usar. Fora do código, divido meu tempo entre jogos, modelagem 3D e panificação.</p>
             </div>
             <dl className="sobre-dados">
               <div><dt>Formação</dt><dd>Engenharia da Computação</dd></div>
@@ -164,6 +167,10 @@ function Portfolio() {
               <div><dt>Atuação</dt><dd>Engenharia de Dados</dd></div>
               <div><dt>Localização</dt><dd>Salvador, Bahia</dd></div>
             </dl>
+          </div>
+          <div className="subsecao-cabecalho">
+            <h3>Habilidades</h3>
+            <p>Tecnologias e ferramentas que fazem parte do meu trabalho e da minha formação.</p>
           </div>
           <div className="competencias">
             {competencias.map((competencia, indice) => (
@@ -174,6 +181,15 @@ function Portfolio() {
                 <p>{competencia.texto}</p>
               </article>
             ))}
+          </div>
+          <div className="interesses-bloco">
+            <div>
+              <span className="secao-indice">Além do trabalho</span>
+              <h3>Interesses</h3>
+            </div>
+            <ul>
+              {interesses.map((interesse) => <li key={interesse}>{interesse}</li>)}
+            </ul>
           </div>
         </section>
 
