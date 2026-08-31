@@ -1,70 +1,237 @@
-import React, { StrictMode, useState } from 'react';
+import React, { StrictMode, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './style.css';
+
+const projetos = [
+  {
+    numero: '01',
+    titulo: 'Automação Google + TikTok',
+    descricao: 'Pipeline para tratar dados de mídia das duas plataformas e enviá-los de forma confiável ao banco de dados.',
+    tags: ['Python', 'APIs', 'Dados'],
+    icone: 'fa-solid fa-arrows-rotate',
+  },
+  {
+    numero: '02',
+    titulo: 'Ponte',
+    descricao: 'Aplicação para compartilhar arquivos e textos entre dispositivos conectados a redes diferentes.',
+    tags: ['Fullstack', 'Redes', 'Em desenvolvimento'],
+    icone: 'fa-solid fa-network-wired',
+  },
+  {
+    numero: '03',
+    titulo: 'Painel Eudora',
+    descricao: 'Dashboard que transforma dados operacionais em uma visualização direta, clara e útil para decisão.',
+    tags: ['HTML', 'CSS', 'JavaScript'],
+    icone: 'fa-solid fa-chart-line',
+  },
+];
+
+const competencias = [
+  { titulo: 'Dados', texto: 'Python, Pandas e SQL para transformar dados brutos em informação útil.', icone: 'fa-solid fa-database' },
+  { titulo: 'Desenvolvimento', texto: 'Interfaces web, integrações e soluções construídas com foco no uso real.', icone: 'fa-solid fa-code' },
+  { titulo: 'Cloud & Entrega', texto: 'Git, implantação em nuvem e organização do fluxo até a produção.', icone: 'fa-solid fa-cloud-arrow-up' },
+];
+
+function classificarImc(imc) {
+  if (imc < 18.5) return 'Abaixo do peso';
+  if (imc < 25) return 'Peso adequado';
+  if (imc < 30) return 'Sobrepeso';
+  return 'Obesidade';
+}
 
 function CalculadoraImc() {
   const [altura, setAltura] = useState('');
   const [peso, setPeso] = useState('');
-  const [resultado, setResultado] = useState('...');
+  const [enviado, setEnviado] = useState(false);
 
-  function calcularImc(event) {
+  const imc = useMemo(() => {
+    const alturaNumero = Number(altura);
+    const pesoNumero = Number(peso);
+    if (!alturaNumero || !pesoNumero || alturaNumero <= 0 || pesoNumero <= 0) return null;
+    return pesoNumero / alturaNumero ** 2;
+  }, [altura, peso]);
+
+  function calcular(event) {
     event.preventDefault();
-    setResultado(`Seu IMC é: ${Number(peso) / (Number(altura) ** 2)}`);
+    setEnviado(true);
   }
 
   return (
     <main className="atividade-pagina">
-      <a className="voltar" href="/">← Voltar ao portfólio</a>
-      <h1>Calculadora de IMC</h1>
-      <form onSubmit={calcularImc}>
-        <input type="number" id="altura" placeholder="Altura em M" value={altura} onChange={(event) => setAltura(event.target.value)} />
-        <input type="number" id="peso" placeholder="Peso em Kg" value={peso} onChange={(event) => setPeso(event.target.value)} />
-        <button id="butaos" type="submit">teste</button>
-        <div id="resultado">{resultado}</div>
-      </form>
+      <a className="voltar" href="/">
+        <i className="fa-solid fa-arrow-left" aria-hidden="true" /> Voltar ao portfólio
+      </a>
+      <section className="calculadora-card" aria-labelledby="titulo-imc">
+        <div className="calculadora-intro">
+          <span className="secao-indice">Atividade 01</span>
+          <h1 id="titulo-imc">Calculadora de IMC</h1>
+          <p>Informe sua altura em metros e seu peso em quilogramas para obter uma estimativa.</p>
+        </div>
+        <form onSubmit={calcular} noValidate>
+          <label htmlFor="altura">Altura</label>
+          <div className="campo-com-unidade">
+            <input type="number" id="altura" min="0.5" max="2.5" step="0.01" placeholder="1,75" value={altura} onChange={(event) => { setAltura(event.target.value); setEnviado(false); }} required />
+            <span>m</span>
+          </div>
+          <label htmlFor="peso">Peso</label>
+          <div className="campo-com-unidade">
+            <input type="number" id="peso" min="1" max="500" step="0.1" placeholder="70" value={peso} onChange={(event) => { setPeso(event.target.value); setEnviado(false); }} required />
+            <span>kg</span>
+          </div>
+          <button className="botao botao-primario" type="submit">Calcular IMC</button>
+        </form>
+        <div className={`resultado-imc ${enviado ? 'visivel' : ''}`} role="status" aria-live="polite">
+          {enviado && imc ? (
+            <><span>Seu resultado</span><strong>{imc.toFixed(1)}</strong><p>{classificarImc(imc)}</p></>
+          ) : enviado ? <p>Preencha os dois campos com valores válidos.</p> : <p>Seu resultado aparecerá aqui.</p>}
+        </div>
+        <small>Esta calculadora tem finalidade educacional e não substitui orientação profissional.</small>
+      </section>
     </main>
   );
 }
 
-// Registre as próximas atividades aqui. Cada uma abrirá em uma nova aba.
 const atividades = {
-  imc: { titulo: 'Calculadora de IMC', descricao: 'Cálculo de índice de massa corporal.', componente: CalculadoraImc },
+  imc: {
+    titulo: 'Calculadora de IMC',
+    descricao: 'Uma experiência simples em React para calcular e interpretar o índice de massa corporal.',
+    componente: CalculadoraImc,
+  },
 };
 
 function Portfolio() {
+  const [menuAberto, setMenuAberto] = useState(false);
+
+  function fecharMenu() {
+    setMenuAberto(false);
+  }
+
   return (
     <>
-      <header id="h1">
-        <div className="links"><a href="#eu">Sobre mim</a></div>
-        <div className="links"><a href="#projetos2">Projetos</a></div>
-        <div className="links"><a href="#atividades-fullstack">Atividades-Fullstack</a></div>
-        <div className="links"><a href="#contato">Contato</a></div>
+      <header className="site-header">
+        <a className="marca" href="#inicio" aria-label="Início">JP<span>.</span></a>
+        <button className="menu-botao" type="button" aria-expanded={menuAberto} aria-controls="navegacao" onClick={() => setMenuAberto((aberto) => !aberto)}>
+          <span className="sr-only">Abrir menu</span>
+          <i className={`fa-solid ${menuAberto ? 'fa-xmark' : 'fa-bars'}`} aria-hidden="true" />
+        </button>
+        <nav id="navegacao" className={menuAberto ? 'aberto' : ''} aria-label="Navegação principal">
+          <a href="#sobre" onClick={fecharMenu}>Sobre</a>
+          <a href="#projetos" onClick={fecharMenu}>Projetos</a>
+          <a href="#atividades" onClick={fecharMenu}>Atividades</a>
+          <a className="nav-contato" href="#contato" onClick={fecharMenu}>Vamos conversar <i className="fa-solid fa-arrow-right" aria-hidden="true" /></a>
+        </nav>
       </header>
+
       <main>
-        <section id="topo" aria-label="Apresentação">
-          <article className="cartao-apresentacao habilidades"><h2>Habilidades</h2><ul><li>SQL</li><li>Python & Pandas</li><li>Git</li><li>Gerenciamento e Implantação em Nuvem</li></ul></article>
-          <img id="eu" src="/eu.png" alt="Foto de João Pedro" />
-          <article className="cartao-apresentacao interesses"><h2>Interesses</h2><ul><li>Tecnologia</li><li>Jogos</li><li>Modelagem 3D</li><li>Panificação</li></ul></article>
+        <section className="hero" id="inicio" aria-labelledby="titulo-principal">
+          <div className="hero-conteudo">
+            <p className="eyebrow"><span /> Engenharia da Computação & Dados</p>
+            <h1 id="titulo-principal">Olá, eu sou<br /><em>João Pedro.</em></h1>
+            <p className="hero-resumo">Transformo dados e ideias em soluções digitais que funcionam — com técnica, clareza e atenção aos detalhes.</p>
+            <div className="hero-acoes">
+              <a className="botao botao-primario" href="#projetos">Conheça meu trabalho <i className="fa-solid fa-arrow-down" aria-hidden="true" /></a>
+              <a className="botao botao-texto" href="mailto:joaopguima@gmail.com">joaopguima@gmail.com</a>
+            </div>
+          </div>
+
+          <div className="retrato-area" aria-label="Retrato de João Pedro">
+            <div className="retrato-moldura">
+              <img src="/eu.png" alt="João Pedro Cerqueira Guimarães" />
+              <span className="retrato-numero">01</span>
+            </div>
+            <div className="disponibilidade"><span /> Disponível para novas conexões</div>
+          </div>
+
+          <a className="hero-scroll" href="#sobre" aria-label="Rolar para a seção sobre mim">
+            <span>Role para descobrir</span><i className="fa-solid fa-arrow-down-long" aria-hidden="true" />
+          </a>
         </section>
-        <div id="introducao"><p>Me chamo João Pedro Cerqueira Guimarães, sou estudante de Engenharia da Computação no Senai Cimatec no 7º semestre. Atualmente estágio na Ideia3 dentro da área de dados, trabalho principalmente com tratamento e conexões de dados relacionados a publicidade do grupo Boticário. Procuro seguir dentro da área de dados, buscando sempre oportunidades para me aperfeiçoar como profissional.</p></div>
+
+        <section className="secao sobre" id="sobre">
+          <div className="secao-cabecalho">
+            <span className="secao-indice">01 — Sobre mim</span>
+            <h2>Entre tecnologia,<br /><em>dados e pessoas.</em></h2>
+          </div>
+          <div className="sobre-conteudo">
+            <div className="sobre-texto">
+              <p className="texto-destaque">Sou estudante de Engenharia da Computação no SENAI CIMATEC e atuo com dados na Ideia 3.</p>
+              <p>No dia a dia, trabalho principalmente com tratamento e conexões de dados de publicidade do Grupo Boticário. É nesse encontro entre análise e construção que encontrei meu caminho profissional.</p>
+              <p>Gosto de entender problemas por inteiro, organizar o que parece complexo e entregar soluções simples de usar. Fora do código, divido meu tempo entre jogos, modelagem 3D e panificação.</p>
+            </div>
+            <dl className="sobre-dados">
+              <div><dt>Formação</dt><dd>Engenharia da Computação</dd></div>
+              <div><dt>Instituição</dt><dd>SENAI CIMATEC</dd></div>
+              <div><dt>Atuação</dt><dd>Engenharia de Dados</dd></div>
+              <div><dt>Localização</dt><dd>Salvador, Bahia</dd></div>
+            </dl>
+          </div>
+          <div className="competencias">
+            {competencias.map((competencia, indice) => (
+              <article className="competencia" key={competencia.titulo}>
+                <span>0{indice + 1}</span>
+                <i className={competencia.icone} aria-hidden="true" />
+                <h3>{competencia.titulo}</h3>
+                <p>{competencia.texto}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="secao projetos" id="projetos">
+          <div className="secao-cabecalho claro">
+            <span className="secao-indice">02 — Projetos selecionados</span>
+            <h2>Ideias que saíram<br /><em>do papel.</em></h2>
+            <p>Uma seleção de projetos de dados e desenvolvimento que representam meu jeito de pensar e construir.</p>
+          </div>
+          <div className="projetos-lista">
+            {projetos.map((projeto) => (
+              <article className="projeto" key={projeto.titulo}>
+                <div className="projeto-topo"><span>{projeto.numero}</span><i className={projeto.icone} aria-hidden="true" /></div>
+                <div className="projeto-corpo">
+                  <h3>{projeto.titulo}</h3>
+                  <div><p>{projeto.descricao}</p><ul aria-label="Tecnologias e características">{projeto.tags.map((tag) => <li key={tag}>{tag}</li>)}</ul></div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="secao atividades" id="atividades">
+          <div className="secao-cabecalho">
+            <span className="secao-indice">03 — Fullstack</span>
+            <h2>Aprender fazendo,<br /><em>sempre.</em></h2>
+          </div>
+          <div className="atividade-lista">
+            {Object.entries(atividades).map(([id, atividade], indice) => (
+              <a className="atividade-item" href={`/?atividade=${id}`} target="_blank" rel="noreferrer" key={id}>
+                <span className="atividade-numero">0{indice + 1}</span>
+                <div><h3>{atividade.titulo}</h3><p>{atividade.descricao}</p></div>
+                <span className="atividade-abrir">Abrir atividade <i className="fa-solid fa-arrow-up-right-from-square" aria-hidden="true" /></span>
+              </a>
+            ))}
+          </div>
+        </section>
+
+        <section className="contato" id="contato">
+          <p className="eyebrow"><span /> Entre em contato</p>
+          <h2>Tem uma ideia?<br /><em>Vamos construir.</em></h2>
+          <a className="contato-email" href="mailto:joaopguima@gmail.com">joaopguima@gmail.com <i className="fa-solid fa-arrow-up-right" aria-hidden="true" /></a>
+          <div className="contato-rodape">
+            <div className="redes">
+              <a href="https://github.com/jpcerq" target="_blank" rel="noreferrer"><i className="fa-brands fa-github" aria-hidden="true" /> GitHub</a>
+              <a href="https://www.linkedin.com/in/joao-pedro-cerqueira-guimaraes/" target="_blank" rel="noreferrer"><i className="fa-brands fa-linkedin-in" aria-hidden="true" /> LinkedIn</a>
+            </div>
+            <p>João Pedro Cerqueira © {new Date().getFullYear()}</p>
+          </div>
+        </section>
       </main>
-      <div id="projetos1"><h1>Alguns projetos</h1></div>
-      <div id="projetos2">
-        <div className="projeto"><i className="fa-brands fa-google" /><i className="fa-brands fa-tiktok" /><h3>Automação Google TikTok</h3><p>Tratamento de dados das plataformas e envio para o banco de dados.</p></div>
-        <div className="projeto"><i className="fa-solid fa-network-wired" /><i className="fa-solid fa-file-arrow-up" /><h3>Ponte</h3><p>Envio de arquivos e textos entre dispositivos em redes diferentes.</p><p>(Em desenvolvimento)</p></div>
-        <div className="projeto"><i className="fa-solid fa-chart-line" /><i className="fa-solid fa-table" /><h3>Painel Eudora</h3><p>Dashboard desenvolvido com HTML, CSS e JavaScript.</p></div>
-      </div>
-      <section id="atividades-fullstack">
-        <h1>Atividades-Fullstack</h1>
-        <div className="atividades-lista">
-          {Object.entries(atividades).map(([id, atividade]) => <article className="atividade" key={id}><h3>{atividade.titulo}</h3><p>{atividade.descricao}</p><a href={`/?atividade=${id}`} target="_blank" rel="noreferrer">Abrir atividade</a></article>)}
-        </div>
-      </section>
-      <div id="contato"><h1 id="conversar">Vamos conversar!</h1><footer><div className="links-contato"><a href="mailto:joaopguima@gmail.com"><i className="fa-solid fa-envelope" /> E-mail</a><a href="https://github.com/jpcerq"><i className="fa-brands fa-github" /> GitHub</a><a href="https://www.linkedin.com/in/joao-pedro-cerqueira-guimaraes/"><i className="fa-brands fa-linkedin" /> LinkedIn</a></div></footer></div>
     </>
   );
 }
 
 const atividadeAtual = new URLSearchParams(window.location.search).get('atividade');
 const ComponenteDaAtividade = atividades[atividadeAtual]?.componente;
-createRoot(document.getElementById('root')).render(<StrictMode>{ComponenteDaAtividade ? <ComponenteDaAtividade /> : <Portfolio />}</StrictMode>);
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>{ComponenteDaAtividade ? <ComponenteDaAtividade /> : <Portfolio />}</StrictMode>,
+);
