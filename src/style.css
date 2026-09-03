@@ -182,8 +182,10 @@ body{
 }
 
 .atividades-lista {
-  display: flex;
-  justify-content: center;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
   width: 80%;
   margin: 20px auto 0;
 }
@@ -221,8 +223,14 @@ body{
 }
 
 #resultado {
-  color: #49635d;
+    color: #49635d;
 }
+
+.mensagem-erro { color: #b42318; }
+.contador-participantes { font-weight: bold; }
+.lista-participantes { list-style: none; padding: 0; display: grid; gap: 10px; }
+.lista-participantes li { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px; border: 1px solid #e0e2de; border-radius: 6px; background-color: #fdfcf7; }
+.lista-participantes button { color: #b42318; }
 
 footer{
   background-color: #173f36;
